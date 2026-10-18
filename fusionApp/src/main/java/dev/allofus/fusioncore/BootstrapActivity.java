@@ -40,6 +40,7 @@ import dev.allofus.fusioncore.hooks.InstrumentationHooks;
 import dev.allofus.fusioncore.hooks.ActivityManagerHooks;
 import dev.allofus.fusioncore.hooks.NotificationManagerHooks;
 import dev.allofus.fusioncore.hooks.PackageManagerHooks;
+import dev.allofus.fusioncore.hooks.WindowSessionHooks;
 import dev.allofus.fusioncore.hooks.GameRuntime;
 import dev.allofus.fusioncore.tools.FusionConfig;
 import dev.allofus.fusioncore.tools.GlobalMetadata;
@@ -184,6 +185,7 @@ public class BootstrapActivity extends AppCompatActivity {
             PackageManagerHooks.install(getApplicationContext(), gameContext);
             ActivityManagerHooks.install(getApplicationContext(), gameContext);
             NotificationManagerHooks.install(getApplicationContext(), gameContext);
+            WindowSessionHooks.install(getApplicationContext());
             GameRuntime.install(gameContext);
         } catch (Exception e) {
             failAndFinish("Failed to install base hooks", e);
@@ -205,7 +207,8 @@ public class BootstrapActivity extends AppCompatActivity {
                     // Its not necessary but could be more performant.
                     var intentWrapped = new Intent(this, StubActivity.class);
                     intentWrapped.putExtra(InstrumentationHooks.EXTRA_IS_DYNAMIC_ACTIVITY, true);
-                    intentWrapped.putExtra(InstrumentationHooks.EXTRA_ORIGINAL_INTENT, intent);
+                    intentWrapped.putExtra(InstrumentationHooks.EXTRA_ORIGINAL_INTENT_TOKEN,
+                            InstrumentationHooks.stashOriginalIntent(intent));
                     intentWrapped.putExtra(InstrumentationHooks.EXTRA_FUSION_CONFIG, config);
                     intentWrapped.putExtra(InstrumentationHooks.EXTRA_TARGET_ORIENTATION, targetOrientation);
                     startActivity(intentWrapped);
